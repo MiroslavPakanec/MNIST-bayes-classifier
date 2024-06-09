@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-  bayes-classifier:
-    image: ${IMAGE_NAME}
+  api:
+    image: ${API_IMAGE_NAME}
     container_name: ${CONTAINER_NAME}
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.api
     env_file:
       - ./.env
     ports:

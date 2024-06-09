@@ -4,7 +4,6 @@ from fastapi import Request
 from loguru import logger
 from starlette.responses import Response
 
-
 class LoggingIntercepter(logging.Handler):
     """
     Default handler from examples in loguru documentaion.

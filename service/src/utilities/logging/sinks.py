@@ -3,7 +3,7 @@ import sys
 from typing import Any
 
 from loguru import logger
-from utilities.logging.formatters import single_line_format
+from src.utilities.logging.formatters import single_line_format
 
 
 def add_terminal_sink(logger: logger):

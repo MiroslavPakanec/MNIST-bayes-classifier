@@ -2,7 +2,6 @@ from pprint import pformat
 
 from loguru._defaults import LOGURU_FORMAT
 
-
 def single_line_format(record: dict) -> str:
     """
     Custom format for loguru loggers.

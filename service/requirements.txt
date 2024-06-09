@@ -3,3 +3,8 @@ uvicorn
 fastapi
 pydantic-settings
 loguru
+
+matplotlib
+pandas
+numpy
+scipy

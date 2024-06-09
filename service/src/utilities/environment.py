@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 
-from utilities.singleton import singleton
+from src.utilities.singleton import singleton
 
 
 @singleton

@@ -3,9 +3,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse
 from static.render import render
-from utilities.environment import Environment
-from utilities.logging.config import (initialize_logging, initialize_logging_middleware)
-from utilities.utilities import get_uptime
+from src.utilities.environment import Environment
+from src.utilities.logging.config import (initialize_logging, initialize_logging_middleware)
+from src.utilities.utilities import get_uptime
 app = FastAPI()
 
 initialize_logging()
@@ -19,8 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get('/api')
-def hello():
+@app.get('/health')
+def health():
     return {
         "service": Environment().COMPOSE_PROJECT_NAME,
         "uptime": get_uptime()

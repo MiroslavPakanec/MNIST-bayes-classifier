@@ -2,10 +2,8 @@ import logging
 
 from fastapi.applications import FastAPI
 from loguru import logger
-from utilities.logging.handlers import (LoggingIntercepter,
-                                        http_request_logging_middleware)
-from utilities.logging.sinks import (add_custom_sink, add_file_sink,
-                                     add_terminal_sink)
+from src.utilities.logging.handlers import (LoggingIntercepter, http_request_logging_middleware)
+from src.utilities.logging.sinks import (add_custom_sink, add_file_sink, add_terminal_sink)
 
 
 def _clear_default_logging_handlers(prefix=''):

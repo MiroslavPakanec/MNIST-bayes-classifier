@@ -8,7 +8,7 @@ MAX_REQUESTS=10000  # The maximum number of requests a worker will process befor
 MAX_REQUESTS_JITTER=4  # The jitter causes the restart per worker to be randomized by randint(0, max_requests_jitter). This is intended to stagger worker restarts to avoid all workers restarting at the same time.
 LOG_FILE=gunicorn.log  # Access/error logs from gunicorn
 
-exec gunicorn 'api:app' \
+exec gunicorn 'src.api:app' \
     --bind=$BIND \
     --workers=$N_WORKERS \
     --worker-class=$WORKER_CLASS \
