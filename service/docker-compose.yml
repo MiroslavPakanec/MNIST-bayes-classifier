@@ -13,11 +13,22 @@ services:
     runtime: ${RUNTIME}
     depends_on:
       - db
+      - migration
     networks:
       - bayes-classifier-network
-
+  migration:
+    container_name: ${MIGRATION_CONTAINER_NAME}
+    build:
+      context: .
+      dockerfile: ./Dockerfile.migration
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    networks:
+      - bayes-classifier-network
   db:
-    image: mongo:latest
+    image: mongo:3.5
     container_name: ${DB_CONTAINER_NAME}
     ports:
       - "${MONGO_DB_PORT}:${MONGO_DB_PORT}"

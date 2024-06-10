@@ -15,8 +15,7 @@ class Environment(BaseSettings):
     TEST_DATA_PATH: str
 
     MONGO_DB_PORT: int
-    MONGO_DB_PASSWORD: str
-    MONGO_DB_USERNAME: str
     MONGO_DB_NAME: str
     MONGO_DB_TRAIN_COLLECTION_NAME: str
     MONGO_DB_TEST_COLLECTION_NAME: str
+    RUN_MIGRATION: bool

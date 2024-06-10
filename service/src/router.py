@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Body
 from loguru import logger
 from starlette.responses import JSONResponse
 from src.dtos.mnist_sample import MNISTSample
@@ -9,7 +9,7 @@ import traceback
 router = APIRouter()
 
 @router.post('/predict')
-def predict(sample: MNISTSample):
+def predict(sample: MNISTSample = Body(..., example=[0]*784)):
     try:
         pred = get_prediction(sample)
         return {'prediction': pred}
