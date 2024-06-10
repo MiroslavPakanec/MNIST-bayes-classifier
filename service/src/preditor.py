@@ -6,10 +6,13 @@ from pandas import DataFrame, Series
 from src.utilities.exceptions import InvalidSampleLengthException, InvalidSamplePixelValueException
 from src.dtos.mnist_sample import MNISTSample
 from src.data_csv_loader import load_train_data
+from src.data_db_loader import load_train_data
 
 def get_prediction(sample: MNISTSample) -> int:
     _validate_sample(sample)
-    xs, ys, labels = load_train_data()
+
+    xs, ys = load_train_data()
+    labels: List[int] = list(ys.unique())
     priors: Dict[int, float] = _get_priors(xs, ys, labels)
     means: Dict[int, NDArray[np.float64]] = _get_means(xs, ys, labels)
     covariances: Dict[int, NDArray[np.float64]] = _get_covariances(xs, ys, labels)

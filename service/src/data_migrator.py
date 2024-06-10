@@ -5,7 +5,7 @@ from src.data_db_loader import insert_train_samples, remove_train_samples, inser
 from src.utilities.environment import Environment
 
 def data_migration():
-    xs_train, ys, _ = load_train_data()
+    xs_train, ys = load_train_data()
     remove_train_samples()
     insert_train_samples(xs_train, ys)
     

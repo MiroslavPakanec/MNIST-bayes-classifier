@@ -1,4 +1,5 @@
-from typing import Dict, List
+import pandas as pd
+from typing import Dict, List, Tuple
 from src.utilities.environment import Environment
 from pymongo.collection import Collection
 from pymongo.database import Database
@@ -11,6 +12,16 @@ client: MongoClient = MongoClient(connection_string)
 db: Database = client[Environment().MONGO_DB_NAME]
 train_collection: Collection = db[Environment().MONGO_DB_TRAIN_COLLECTION_NAME]
 test_collection: Collection = db[Environment().MONGO_DB_TEST_COLLECTION_NAME]
+
+def load_train_data() -> Tuple[DataFrame, Series]:
+    cursor = train_collection.find()
+    samples: List[Dict[int, List[int]]] = list(cursor)
+    xs: List[int][int] = []
+    ys: List[int] = []
+    for sample in samples:
+        xs.append(sample['data'])
+        ys.append(sample['label'])
+    return pd.DataFrame(xs), pd.Series(ys)
 
 def insert_train_samples(xs: DataFrame, ys: Series) -> None:
     logger.info('inserting train samples...')
