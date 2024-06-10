@@ -6,6 +6,7 @@ from static.render import render
 from src.utilities.environment import Environment
 from src.utilities.logging.config import (initialize_logging, initialize_logging_middleware)
 from src.utilities.utilities import get_uptime
+from src.router import router
 app = FastAPI()
 
 initialize_logging()
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(router, tags=['Model'])
 
 @app.get('/health')
 def health():

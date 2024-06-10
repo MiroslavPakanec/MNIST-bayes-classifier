@@ -10,3 +10,5 @@ class Environment(BaseSettings):
     HOST_IP: str
     CONTAINER_PORT: int
     COMPOSE_PROJECT_NAME: str
+
+    TRAIN_DATA_PATH: str
