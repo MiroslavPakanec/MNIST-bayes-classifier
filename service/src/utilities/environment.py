@@ -12,3 +12,11 @@ class Environment(BaseSettings):
     COMPOSE_PROJECT_NAME: str
 
     TRAIN_DATA_PATH: str
+    TEST_DATA_PATH: str
+
+    MONGO_DB_PORT: int
+    MONGO_DB_PASSWORD: str
+    MONGO_DB_USERNAME: str
+    MONGO_DB_NAME: str
+    MONGO_DB_TRAIN_COLLECTION_NAME: str
+    MONGO_DB_TEST_COLLECTION_NAME: str

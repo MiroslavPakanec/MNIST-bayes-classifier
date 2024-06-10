@@ -1,8 +1,7 @@
 version: '3.8'
 services:
   api:
-    image: ${API_IMAGE_NAME}
-    container_name: ${CONTAINER_NAME}
+    container_name: ${API_CONTAINER_NAME}
     build:
       context: .
       dockerfile: ./Dockerfile.api
@@ -12,6 +11,21 @@ services:
       - ${HOST_PORT}:${CONTAINER_PORT}
     ipc: ${IPC}
     runtime: ${RUNTIME}
+    depends_on:
+      - db
+    networks:
+      - bayes-classifier-network
+
+  db:
+    image: mongo:latest
+    container_name: ${DB_CONTAINER_NAME}
+    ports:
+      - "${MONGO_DB_PORT}:${MONGO_DB_PORT}"
+    restart: always
+    volumes:
+      - type: bind
+        source: ${MONGO_DATA_SOURCE}
+        target: ${MONGO_DATA_TARGET}
     networks:
       - bayes-classifier-network
 networks:
