@@ -39,7 +39,29 @@ export const usePixelStore = defineStore('pixels', () => {
         }
     }
 
+    const invert = (pixels: number[][]): number[][] => {
+        const inverted: number[][] = []
+        for (let i = 0; i < dim.value; i++) {
+            const row: number[] = []
+            for (let j = 0; j < dim.value; j++) {
+                row.push(255 - pixels[i][j])
+            }
+            inverted.push(row)
+        }
+        return inverted
+    }
+
+    const flatten = (pixels: number[][]): number[] => {
+        const flat: number[] = []
+        for (let i = 0; i <= 27; i++) {
+            for (let j = 0; j <= 27; j++) {
+                flat.push(pixels[j][i]);
+            }
+        }
+        return flat
+    }
+
     const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
     
-    return { pixels, reset, draw }
+    return { pixels, reset, draw, invert, flatten }
 })

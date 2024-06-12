@@ -2,7 +2,7 @@
   <div id="container" :style="{ background: gradient }" >
     <div id="navbar" :style="{'width': `${canvasWidth}px`, 'marginTop': `${marginTop}px`}">
       <button class="btn" @click="pixelStore.reset()">Reset</button>
-      <button class="btn">Predict</button>
+      <button class="btn" @click="predict()">Predict</button>
       <span id="prediction"></span>
     </div>
     <div id="canvas" :style="{ 'height': `${canvasHeight}px`, 'width': `${canvasWidth}px` }" />
@@ -13,8 +13,11 @@
 import p5 from 'p5'
 import { ComputedRef, Ref, computed, onMounted, ref } from 'vue'
 import { usePixelStore } from '@/stores/pixelStore'
+import { HttpService } from '@/services/httpService'
 
 const pixelStore = usePixelStore()
+const httpService: HttpService = new HttpService()
+
 const brushDiameter: Ref<number> = ref(60)
 const canvasPercent: Ref<number> = ref(0.6)
 const canvasWidth: Ref<number> = ref(window.innerHeight * canvasPercent.value)
@@ -95,6 +98,11 @@ const sketch = (sketch: any) => {
 }
 
 const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
+
+const predict = async (): Promise<void> => {
+  const result: number = await httpService.predictDigit()
+  console.log(result)
+}
 
 onMounted(() => {
   const sketch_element = document.getElementById('canvas')

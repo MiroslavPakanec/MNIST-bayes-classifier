@@ -3,13 +3,14 @@ from typing import Dict, List
 from numpy.typing import NDArray
 from scipy.stats import multivariate_normal
 from pandas import DataFrame, Series
+from src.validator import validate
 from src.utilities.exceptions import InvalidSampleLengthException, InvalidSamplePixelValueException
 from src.dtos.mnist_sample import MNISTSample
 from src.data_csv_loader import load_train_data
 from src.data_db_loader import load_train_data
 
 def get_prediction(sample: MNISTSample) -> int:
-    _validate_sample(sample)
+    validate(sample)
 
     xs, ys = load_train_data()
     labels: List[int] = list(ys.unique())
@@ -57,10 +58,4 @@ def _normilize_posterios(log_posteriors: Dict[int, NDArray[np.float64]], labels:
 
 def _get_most_likely_label(posteriors: Dict[int, NDArray[np.float64]]) -> int:
     return max(posteriors, key=posteriors.get)
-
-def _validate_sample(sample: MNISTSample) -> None:
-    if len(sample) != 784:
-        raise InvalidSampleLengthException(len(sample))
-    if not all(0 <= pixel <= 255 for pixel in sample):
-        raise InvalidSamplePixelValueException()
         
