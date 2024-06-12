@@ -1,7 +1,7 @@
 <template>
   <div id="container" :style="{ background: gradient }" >
     <div id="navbar" :style="{'width': `${canvasWidth}px`, 'marginTop': `${marginTop}px`}">
-      <button class="btn" @click="resetPixels()">Reset</button>
+      <button class="btn" @click="pixelStore.reset()">Reset</button>
       <button class="btn">Predict</button>
       <span id="prediction"></span>
     </div>
@@ -12,7 +12,9 @@
 <script lang="ts" setup>
 import p5 from 'p5'
 import { ComputedRef, Ref, computed, onMounted, ref } from 'vue'
+import { usePixelStore } from '@/stores/pixelStore'
 
+const pixelStore = usePixelStore()
 const brushDiameter: Ref<number> = ref(60)
 const canvasPercent: Ref<number> = ref(0.6)
 const canvasWidth: Ref<number> = ref(window.innerHeight * canvasPercent.value)
@@ -23,20 +25,6 @@ const isLmbPressed: Ref<boolean> = ref(false)
 const mouseXPercent: Ref<number> = ref(0)
 const mouseYPercent: Ref<number> = ref(0)
 const gradient: ComputedRef<string> = computed(() => `radial-gradient(at ${mouseXPercent.value}% ${mouseYPercent.value}%, #3498db, #9b59b6)`)
-
-const initializePizels = (): number[][] => {
-  const matrix: number[][] = []
-  for (let i = 0; i < 28; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < 28; j++) {
-      row.push(255)
-    }
-    matrix.push(row);
-  }
-  return matrix
-}
-
-const pixels: Ref<number[][]> = ref(initializePizels())
 
 const getMouseX = (sketch: any): number => sketch.mouseX - (canvasWidth.value / 2)
 const getMouseY = (sketch: any): number => sketch.mouseY - (canvasHeight.value / 2)
@@ -59,8 +47,8 @@ const drawCursor = (sketch: any): void => {
 const drawPixels = (sketch: any): void => {
   sketch.stroke(150, 150, 150)
   sketch.strokeWeight = 1
-  for (let i = 0; i < pixels.value.length; i++) {
-    const row = pixels.value[i]
+  for (let i = 0; i < pixelStore.pixels.length; i++) {
+    const row = pixelStore.pixels[i]
     for (let j = 0; j < row.length; j++) {
       const pixel: number = row[j]
       sketch.fill(pixel, pixel, pixel)
@@ -73,31 +61,10 @@ const drawPixels = (sketch: any): void => {
   }
 }
 
-const resetPixels = (): void => { pixels.value = initializePizels() }
-
-const incrimentPixels = (sketch: any) => {
-  const mx: number = sketch.mouseX
-  const my: number = sketch.mouseY
-  const pixelSize = canvasWidth.value / 28
-  const n = 28
-  const r: number = brushDiameter.value / 2
-  const startX: number = Math.max(0, Math.floor((mx - r) / pixelSize))
-  const endX: number = Math.min(n, Math.ceil((mx + r) / pixelSize))
-  const startY: number = Math.max(0, Math.floor((my - r) / pixelSize))
-  const endY: number = Math.min(n, Math.ceil((my + r) / pixelSize))
-
-  for (let i = startX; i <= endX; i++) {
-    for (let j = startY; j <= endY; j++) {
-      if (i < 0 || i >= n || j < 0 || j >= n) continue
-      pixels.value[i][j] -= 50
-      pixels.value[i][j] = clamp(pixels.value[i][j], 0, 255)    
-    }
-  }
-}
-
 const sketch = (sketch: any) => {
   sketch.setup = () => {
     sketch.createCanvas(canvasWidth.value, canvasHeight.value, sketch.WEBGL)
+    pixelStore.reset()
   }
 
   sketch.windowResized = () => {
@@ -107,7 +74,7 @@ const sketch = (sketch: any) => {
 
   sketch.draw = () => {
     if (skipRender(sketch)) return
-    if (isLmbPressed.value) incrimentPixels(sketch)
+    if (isLmbPressed.value) pixelStore.draw(sketch.mouseX, sketch.mouseY, brushDiameter.value, canvasWidth.value)
     sketch.background(255,255,255)
     drawPixels(sketch)
     drawCursor(sketch)
@@ -141,10 +108,8 @@ onMounted(() => {
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
-
   background: rgb(155, 89, 182);
   background: radial-gradient(at center, rgb(51, 152, 219), #9b59b6);
-
 }
 
 #canvas {

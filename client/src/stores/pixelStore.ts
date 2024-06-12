@@ -1,0 +1,45 @@
+import { defineStore } from "pinia"
+import { Ref, ref } from "vue"
+
+export const usePixelStore = defineStore('pixels', () => {
+    const dim: Ref<number> = ref(28)
+    const pixels: Ref<number[][]> = ref([])
+
+    const reset = (): void => {
+        const matrix: number[][] = []
+        for (let i = 0; i < dim.value; i++) {
+            const row: number[] = []
+            for (let j = 0; j < dim.value; j++) {
+              row.push(255)
+            }
+            matrix.push(row)
+        }
+        pixels.value = matrix
+    }
+
+    // mx: Mouse X coord
+    // my: Mouse Y coord
+    // d: brush diameter
+    // w: Canvas width
+    const draw = (mx: number, my: number, d: number, w: number): void => {
+        const n = dim.value
+        const pixelSize = w / n
+        const r: number = d / 2
+        const startX: number = Math.max(0, Math.floor((mx - r) / pixelSize))
+        const endX: number = Math.min(n, Math.ceil((mx + r) / pixelSize))
+        const startY: number = Math.max(0, Math.floor((my - r) / pixelSize))
+        const endY: number = Math.min(n, Math.ceil((my + r) / pixelSize))
+      
+        for (let i = startX; i <= endX; i++) {
+          for (let j = startY; j <= endY; j++) {
+            if (i < 0 || i >= n || j < 0 || j >= n) continue
+            pixels.value[i][j] -= 50
+            pixels.value[i][j] = clamp(pixels.value[i][j], 0, 255)    
+          }
+        }
+    }
+
+    const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
+    
+    return { pixels, reset, draw }
+})
