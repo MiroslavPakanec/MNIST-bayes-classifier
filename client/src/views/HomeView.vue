@@ -1,9 +1,13 @@
 <template>
   <div id="container" :style="{ background: gradient }" >
     <div id="navbar" :style="{'width': `${canvasWidth}px`, 'marginTop': `${marginTop}px`}">
-      <button class="btn" @click="pixelStore.reset()">Reset</button>
-      <button class="btn" @click="predict()">Predict</button>
-      <span id="prediction"></span>
+      <button class="btn" @click="reset()">Reset</button>
+      <button class="btn btn-loader" @click="predict()" :disabled="isPredictButtonDisabled">
+        <span v-if="showLoader" class="loader"></span>
+        {{ predictButtonText }}
+      </button>
+      <button class="btn" @click="copy()">{{ copyButtonText }}</button>
+      <span v-if="prediction !== undefined" id="prediction">Prediction: {{ prediction }}</span>
     </div>
     <div id="canvas" :style="{ 'height': `${canvasHeight}px`, 'width': `${canvasWidth}px` }" />
   </div>
@@ -13,22 +17,27 @@
 import p5 from 'p5'
 import { ComputedRef, Ref, computed, onMounted, ref } from 'vue'
 import { usePixelStore } from '@/stores/pixelStore'
-import { HttpService } from '@/services/httpService'
+import { useHttpStore } from '@/stores/httpStore'
 
 const pixelStore = usePixelStore()
-const httpService: HttpService = new HttpService()
+const httpStore = useHttpStore()
 
-const brushDiameter: Ref<number> = ref(60)
+const brushDiameter: Ref<number> = ref(20)
 const canvasPercent: Ref<number> = ref(0.6)
 const canvasWidth: Ref<number> = ref(window.innerHeight * canvasPercent.value)
 const canvasHeight: Ref<number> = ref(window.innerHeight * canvasPercent.value)
 const marginTop: ComputedRef<number> = computed(() => (window.innerHeight / 2) - (canvasHeight.value / 2))
+const copyButtonText: Ref<string> = ref('Copy')
+const predictButtonText: ComputedRef<string> = computed(() => httpStore.isFetching ? 'Predicting...' : 'Predict')
+const isPredictButtonDisabled: ComputedRef<boolean> = computed(() => httpStore.isFetching)
+const showLoader: ComputedRef<boolean> = computed(() => httpStore.isFetching)
 
 const isLmbPressed: Ref<boolean> = ref(false)
 const mouseXPercent: Ref<number> = ref(0)
 const mouseYPercent: Ref<number> = ref(0)
 const gradient: ComputedRef<string> = computed(() => `radial-gradient(at ${mouseXPercent.value}% ${mouseYPercent.value}%, #3498db, #9b59b6)`)
-
+const prediction: Ref<string | undefined> = ref(undefined)
+  
 const getMouseX = (sketch: any): number => sketch.mouseX - (canvasWidth.value / 2)
 const getMouseY = (sketch: any): number => sketch.mouseY - (canvasHeight.value / 2)
 
@@ -100,8 +109,23 @@ const sketch = (sketch: any) => {
 const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
 
 const predict = async (): Promise<void> => {
-  const result: number = await httpService.predictDigit()
-  console.log(result)
+  const result: number | undefined = await httpStore.predictDigit()
+  const resultStr: string = result === undefined ? 'Unknown' : result.toString()
+  prediction.value = resultStr
+}
+
+const copy = async (): Promise<void> => {
+  const pixels: string = pixelStore.pixelsToString()
+  await navigator.clipboard.writeText(pixels)
+  copyButtonText.value = 'Copied!'
+  setTimeout(() => {
+    copyButtonText.value = 'Copy';
+  }, 2000);
+}
+
+const reset = () => {
+  pixelStore.reset()
+  prediction.value = undefined
 }
 
 onMounted(() => {
@@ -137,17 +161,23 @@ onMounted(() => {
   align-items: center;
   justify-content: flex-start;
   padding: 5px;
-  /* border: 1px solid white;
-  border-radius: 20px; */
   gap: 10px;
 }
 
 .btn {
-  padding: 10px;
+  padding: 15px;
   border: 1px solid white;
   background-color: transparent;
   color: white;
   border-radius: 5px;
+  height: 50px;
+}
+
+.btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
 }
 
 .btn:hover {
@@ -157,11 +187,63 @@ onMounted(() => {
   background-color: rgba(219, 128, 255, 0.2);
 }
 
+.btn:disabled {
+  border: 1px solid #4e2c5b;
+  color: #4e2c5b;
+  background-color: rgba(219, 128, 255, 0.2);
+  cursor: not-allowed;
+}
+
 .btn.active {
   border: 1px solid #4e2c5b;
   color: #4e2c5b;
-  background-color: rgba(219, 128, 255, 0.2)
+  background-color: rgba(219, 128, 255, 0.2);
 }
+
+#prediction { 
+  border: 1px solid #4e2c5b;
+  color: #4e2c5b;
+  background-color: rgba(219, 128, 255, 0.2);
+  border-radius: 5px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.loader {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 1px solid #FFF;
+  border-right: 1px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border-bottom: 1px solid #4e2c5b;
+  border-left: 1px solid transparent;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
 
 
 </style>

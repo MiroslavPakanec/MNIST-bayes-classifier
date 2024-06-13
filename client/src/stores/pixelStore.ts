@@ -33,7 +33,7 @@ export const usePixelStore = defineStore('pixels', () => {
         for (let i = startX; i <= endX; i++) {
           for (let j = startY; j <= endY; j++) {
             if (i < 0 || i >= n || j < 0 || j >= n) continue
-            pixels.value[i][j] -= 50
+            pixels.value[i][j] -= 20
             pixels.value[i][j] = clamp(pixels.value[i][j], 0, 255)    
           }
         }
@@ -61,7 +61,13 @@ export const usePixelStore = defineStore('pixels', () => {
         return flat
     }
 
+    const pixelsToString = (): string => {
+        const inverted: number[][] = invert(pixels.value)
+        const flattened: number[] = flatten(inverted)
+        return JSON.stringify(flattened)
+    }
+
     const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
     
-    return { pixels, reset, draw, invert, flatten }
+    return { pixels, reset, draw, invert, flatten, pixelsToString }
 })
