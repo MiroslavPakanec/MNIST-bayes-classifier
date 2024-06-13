@@ -43,3 +43,4 @@ networks:
   bayes-classifier-network:
     driver: bridge
     name: bayes-classifier-network
+    external: true
