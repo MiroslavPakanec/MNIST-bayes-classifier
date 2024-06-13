@@ -1,7 +1,6 @@
-# Simple MNIST bayesian classifier 🥷  
+# Simple MNIST bayesian classifier 🔢
 
 - This repo contains a frontend web client and a backend python service for an MNIST classifier
-- Please refer to README.md files in respective folders 
   
 ## Quick start
 ### Dependencies
@@ -11,7 +10,7 @@
 2. Place both files in `service/data`
 3. From project root run `run_linux.sh` or `run_windows.bat` depending on your OS
 
-- Verify service is running at http://localhost:4000
+- Verify api is running at http://localhost:4000
 - Verify client is running at http://localhost:4001
 
 ### Troubleshoot
@@ -20,3 +19,6 @@
   - Connection string: `mongodb://localhost:27017/`
   - Db: `bayes_classifier`
   - Collection: `MNIST_train`
+
+### Settings
+- If you don't want to run data migration set `RUN_MIGRATION=false` in `./service/.env`
