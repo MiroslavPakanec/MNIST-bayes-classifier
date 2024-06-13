@@ -15,7 +15,7 @@ services:
       - db
       - migration
     networks:
-      - bayes-classifier-network
+      - bc-net
   migration:
     container_name: ${MIGRATION_CONTAINER_NAME}
     build:
@@ -26,7 +26,7 @@ services:
     depends_on:
       - db
     networks:
-      - bayes-classifier-network
+      - bc-net
   db:
     image: mongo:3.5
     container_name: ${DB_CONTAINER_NAME}
@@ -38,9 +38,9 @@ services:
         source: ${MONGO_DATA_SOURCE}
         target: ${MONGO_DATA_TARGET}
     networks:
-      - bayes-classifier-network
+      - bc-net
 networks:
-  bayes-classifier-network:
+  bc-net:
     driver: bridge
-    name: bayes-classifier-network
+    name: bc-net
     external: true

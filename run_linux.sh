@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create Docker network
-docker network create --driver bridge --opt com.docker.network.bridge.name=bayes-classifier-network bayes-classifier-network
+docker network create --driver bridge --opt com.docker.network.bridge.name=bc-net bc-net
 
 # Navigate to the client directory and run the shell script
 cd client

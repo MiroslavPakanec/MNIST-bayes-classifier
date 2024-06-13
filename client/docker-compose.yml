@@ -11,9 +11,9 @@ services:
     ports:
       - ${HOST_PORT}:${CONTAINER_PORT}
     networks:
-      - bayes-classifier-network
+      - bc-net
 networks:
-  bayes-classifier-network:
+  bc-net:
     driver: bridge
-    name: bayes-classifier-network
+    name: bc-net
     external: true
