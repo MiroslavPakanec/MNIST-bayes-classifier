@@ -3,13 +3,12 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 
 from src.utilities.environment import Environment
-from src.validator import validate
+from src.validator import validate_sample
 from src.dtos.mnist_sample import MNISTSample
 
 def get_image(sample: MNISTSample) -> bytes:
-    validate(sample)
+    validate_sample(sample)
     sample_array = np.array(sample).reshape(28, 28)
-
     img_buffer = BytesIO()
     plt.imshow(sample_array, cmap='gray')
     plt.axis('off') 

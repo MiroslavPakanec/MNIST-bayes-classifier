@@ -9,7 +9,19 @@ class SampleValidationException(HTTPException):
     
     @staticmethod
     def log_error(detail: str):
-        logger.error('[VALIDATION ERROR]')
+        logger.error('[SAMPLE VALIDATION ERROR]')
+        logger.error(detail)
+        logger.error(traceback.format_exc())
+
+class LabelValidationException(HTTPException):
+    def __init__(self, actual_label):
+        detail = f'Label has to be a number between 0 and 9, not {actual_label}'
+        self.log_error(detail)
+        super().__init__(status_code=400, detail=detail)
+    
+    @staticmethod
+    def log_error(detail: str):
+        logger.error('[LABEL VALIDATION ERROR]')
         logger.error(detail)
         logger.error(traceback.format_exc())
 
